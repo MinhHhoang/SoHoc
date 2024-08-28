@@ -2,7 +2,7 @@
 import ActionTable from "components/common/ActionTable";
 import CustomTooltip from "components/common/CustomTooltip";
 import TemplateContent from "components/layout/TemplateContent";
-import { formatCurrency, formatCurrencyToK } from "helper/functions";
+import { formatCurrencyToK } from "helper/functions";
 import _map from "lodash/map";
 import _size from "lodash/size";
 import { useEffect, useState } from "react";
@@ -58,6 +58,7 @@ function ManagerData(props) {
     if (actionSuccess) {
       onCloseTooltip();
       setData({ value: "", money: "" });
+      onGetStatistic();
     }
   }, [actionSuccess]);
 
