@@ -2,7 +2,7 @@
 import ActionTable from "components/common/ActionTable";
 import CustomTooltip from "components/common/CustomTooltip";
 import TemplateContent from "components/layout/TemplateContent";
-import { formatCurrency } from "helper/functions";
+import { formatCurrency, formatCurrencyToK } from "helper/functions";
 import _map from "lodash/map";
 import _size from "lodash/size";
 import { useEffect, useState } from "react";
@@ -183,9 +183,16 @@ function ManagerData(props) {
                       <th
                         scope="col"
                         className="align-middle"
-                        style={{ width: "50%" }}
+                        style={{ width: "33%" }}
                       >
                         TỔNG TIỀN
+                      </th>
+                      <th
+                        scope="col"
+                        className="align-middle"
+                        style={{ width: "33%" }}
+                      >
+                        TRẠNG THÁI
                       </th>
                     </tr>
                   </thead>
@@ -210,27 +217,14 @@ function ManagerData(props) {
                     {_map(sortNumber(Object.keys(listStatistic)), (key) => (
                       <tr key={key}>
                         <td className="align-middle">
-                          {/* <Badge
-                            className="py-2 px-3"
-                            pill
-                            bg={
-                              listStatistic[key].status === "Bình Thường"
-                                ? "success"
-                                : "danger"
-                            }
-                          >
-                            {key}
-                          </Badge> */}
-                          <b
-                            style={{
-                              fontSize: 20,
-                              color:
-                                listStatistic[key].status === "Bình Thường"
-                                  ? "green"
-                                  : "red",
-                            }}
-                          >
-                            {key}
+                          <b style={{ fontSize: 20 }}>{key}</b>
+                        </td>
+                        <td className="align-middle">
+                          <b>
+                            {formatCurrencyToK(
+                              listStatistic[key].totalMoney,
+                              1
+                            )}
                           </b>
                         </td>
                         <td
@@ -242,7 +236,7 @@ function ManagerData(props) {
                                 : "red",
                           }}
                         >
-                          {/* <Badge
+                          <Badge
                             className="py-2 px-3"
                             pill
                             bg={
@@ -251,12 +245,8 @@ function ManagerData(props) {
                                 : "danger"
                             }
                           >
-                            {key}
-                          </Badge> */}
-                          <b>
-                            {" "}
-                            {formatCurrency(listStatistic[key].totalMoney)}
-                          </b>
+                            {listStatistic[key].status}
+                          </Badge>
                         </td>
                       </tr>
                     ))}
@@ -321,7 +311,7 @@ function ManagerData(props) {
                           <b>{item.value}</b>
                         </td>
                         <td className="align-middle">
-                          {formatCurrency(item.money)}
+                          {formatCurrencyToK(item.money, 1)}
                         </td>
                         <td className="align-middle">
                           <ActionTable

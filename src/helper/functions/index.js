@@ -38,8 +38,8 @@ export const formatCurrency = (amount, unit = "VND") => {
   }).format(amount);
 };
 
-export const formatCurrencyToK = (amount) => {
-  const formattedAmount = (amount / 1000).toLocaleString("vi-VN");
+export const formatCurrencyToK = (amount, ratio = 1000) => {
+  const formattedAmount = (amount / ratio).toLocaleString("vi-VN");
   return `${formattedAmount}K`;
 };
 
