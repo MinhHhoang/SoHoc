@@ -87,12 +87,12 @@ function ManagerData(props) {
   const handleDelete = () => {
     if (tooltip.type === "delete") onDelete(tooltip.info.id);
   };
-  const sortNumber = (arr) =>
-    arr.sort((a, b) => {
-      if (a === "00" && b !== "00") return -1; // "00" đứng trước
-      if (a !== "00" && b === "00") return 1; // "00" đứng trước
-      return a.localeCompare(b); // Sắp xếp bình thường cho các giá trị còn lại
-    });
+
+  const sortData = (data) => {
+    const entries = Object.entries(data);
+    entries.sort(([, a], [, b]) => b.totalMoney - a.totalMoney);
+    return entries.map(([key, value]) => ({ label: key, value }));
+  };
 
   return (
     <div>
@@ -215,24 +215,19 @@ function ManagerData(props) {
                           </td>
                         </tr>
                       )}
-                    {_map(sortNumber(Object.keys(listStatistic)), (key) => (
+                    {_map(sortData(listStatistic), (item, key) => (
                       <tr key={key}>
                         <td className="align-middle">
-                          <b style={{ fontSize: 20 }}>{key}</b>
+                          <b style={{ fontSize: 20 }}>{item?.label}</b>
                         </td>
                         <td className="align-middle">
-                          <b>
-                            {formatCurrencyToK(
-                              listStatistic[key].totalMoney,
-                              1
-                            )}
-                          </b>
+                          <b>{formatCurrencyToK(item?.value?.totalMoney, 1)}</b>
                         </td>
                         <td
                           className="align-middle"
                           style={{
                             color:
-                              listStatistic[key].status === "Bình Thường"
+                              item?.value?.status === "Bình Thường"
                                 ? "green"
                                 : "red",
                           }}
@@ -241,12 +236,12 @@ function ManagerData(props) {
                             className="py-2 px-3"
                             pill
                             bg={
-                              listStatistic[key].status === "Bình Thường"
+                              item?.value?.status === "Bình Thường"
                                 ? "success"
                                 : "danger"
                             }
                           >
-                            {listStatistic[key].status}
+                            {item?.value?.status}
                           </Badge>
                         </td>
                       </tr>
