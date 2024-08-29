@@ -1,30 +1,17 @@
+import { ROUTES } from "constants/routerWeb";
 import _capitalize from "lodash/capitalize";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Alert, Button, Form } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { EnumHome } from "router";
-import { actionClearError, actionLogin } from "store/Login/action";
 import BackgroundImage from "../../assets/images/bg.jpg";
 import Logo from "../../assets/images/reactlogo.png";
 import "./index.scss";
 
 const Login = () => {
-  const loginState = useSelector((state) => state.loginReducer);
-  // action store
-  const dispatch = useDispatch();
-  const onLogin = (body, isRemember) => dispatch(actionLogin(body, isRemember));
-  const onClearError = () => dispatch(actionClearError());
-  const {
-    loginStatus: { isLoading, isSuccess, isFailure },
-    data,
-  } = loginState;
-
-  const { user } = data;
-
   // state local
   const navigate = useNavigate();
-  const [isRemember, setRemember] = useState(false);
+  const [isRemember, setRemember] = useState(true);
+  const [noti, setNoti] = useState("");
   const [formdata, setData] = useState({
     username: "",
     password: "",
@@ -33,19 +20,11 @@ const Login = () => {
     username: "",
     password: "",
   });
-
-  useEffect(() => {
-    if (isSuccess) {
-      navigate(EnumHome[user?.role_id]);
-    }
-  }, [navigate, isSuccess]);
-
   // function local
   const handleChange = (e) => {
     const { name, value } = e.target;
     setData((prevData) => ({ ...prevData, [name]: value }));
     setError((prevError) => ({ ...prevError, [name]: "" }));
-    if (isFailure) setError((prevError) => ({ ...prevError, password: "" }));
   };
 
   const handleSubmit = (event) => {
@@ -63,10 +42,20 @@ const Login = () => {
     });
     if (validates) {
       // dispatch
-      onLogin(
-        { email: formdata.username, password: formdata.password },
-        isRemember
-      );
+      if (
+        process.env.REACT_APP_USERNAME === formdata.username &&
+        process.env.REACT_APP_PASSWORD === formdata.password
+      ) {
+        localStorage.setItem(
+          "exprired_1",
+          new Date().getTime() + 3 * 60 * 60 * 1000
+        ); // 3h
+        setTimeout(() => {
+          navigate(ROUTES.HOME_PAGE);
+        }, 1000);
+      } else {
+        setNoti("Tài khoản mật khẩu không đúng");
+      }
     }
   };
 
@@ -87,9 +76,9 @@ const Login = () => {
         />
         <div className="h4 mb-2 text-center">Sign In</div>
         {/* ALert */}
-        {data?.error && (
-          <Alert variant="danger" onClose={() => onClearError()} dismissible>
-            <span>{data?.error}</span>
+        {noti && (
+          <Alert variant="danger" onClose={() => setNoti("")} dismissible>
+            <span>{noti}</span>
           </Alert>
         )}
 
@@ -128,20 +117,23 @@ const Login = () => {
               className="ps-4"
               onChange={() => setRemember((prev) => !prev)}
             >
-              <Form.Check.Input type="checkbox"></Form.Check.Input>
-              <span className="form-check-sign"></span>
+              <Form.Check.Input
+                checked={isRemember}
+                type="checkbox"
+                // onChange={() => setRemember((prev) => !prev)}
+              ></Form.Check.Input>
               Remember me
             </Form.Check.Label>
           </Form.Check>
         </Form.Group>
 
         <Button
-          disabled={isLoading}
+          // disabled={isLoading}
           className="w-100 btn-fill"
           variant="primary"
           type="submit"
         >
-          {isLoading ? " Logging In..." : "LOGIN"}
+          {false ? " Logging In..." : "LOGIN"}
         </Button>
 
         <div className="d-flex justify-content-end">
@@ -153,10 +145,6 @@ const Login = () => {
           </Button>
         </div>
       </Form>
-      {/* Footer */}
-      <div className="w-100 mb-2 position-absolute bottom-0 start-50 translate-middle-x text-white text-center">
-        Made by Hatoa | &copy;2024
-      </div>
     </div>
   );
 };

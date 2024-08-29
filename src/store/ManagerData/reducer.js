@@ -6,15 +6,17 @@ const status = { isLoading: false, isSuccess: false, isFailure: false };
 const initialState = {
   listStatus: { ...status },
   statisticStatus: { ...status },
+  resetMoneyStatus: { ...status },
   actionStatus: { ...status },
+  settingStatus: { ...status },
   list: [],
-  listStatistic: [],
-  detail: {},
-  excel: "",
+  listStatistic: {},
   params: { limit: 10, page: 1 },
   meta: {
     total: 0,
   },
+  limitSetting: {},
+  sumTotalMoney: 0,
 };
 
 const managerDataReducer = (state = initialState, action) => {
@@ -50,12 +52,16 @@ const managerDataReducer = (state = initialState, action) => {
         draft.statisticStatus.isLoading = false;
         draft.statisticStatus.isSuccess = true;
         draft.listStatistic = action.payload.data;
+        draft.limitSetting = action.payload.limitSetting;
+        draft.sumTotalMoney = action.payload.sumTotalMoney;
         break;
 
       case ActionTypes.STATISTIC_FAILED:
         draft.statisticStatus.isLoading = false;
         draft.statisticStatus.isFailure = true;
-        draft.listStatistic = [];
+        draft.listStatistic = {};
+        draft.limitSetting = {};
+        draft.sumTotalMoney = 0;
         break;
 
       case ActionTypes.ADD:
@@ -109,6 +115,45 @@ const managerDataReducer = (state = initialState, action) => {
       case ActionTypes.DELETE_FAILED:
         draft.actionStatus.isLoading = false;
         draft.actionStatus.isFailure = true;
+        break;
+
+      case ActionTypes.RESET:
+        draft.resetMoneyStatus.isLoading = true;
+        draft.resetMoneyStatus.isSuccess = false;
+        draft.resetMoneyStatus.isFailure = false;
+        break;
+
+      case ActionTypes.RESET_SUCCESS:
+        draft.resetMoneyStatus.isLoading = false;
+        draft.resetMoneyStatus.isSuccess = true;
+        Object.keys(state.listStatistic).forEach((key) => {
+          draft.listStatistic[key].totalMoney = 0;
+          draft.listStatistic[key].status = "Bình Thường";
+        });
+        draft.list = state.list.map((item) => ({ ...item, money: 0 }));
+        draft.sumTotalMoney = 0;
+        break;
+
+      case ActionTypes.RESET_FAILED:
+        draft.resetMoneyStatus.isLoading = false;
+        draft.resetMoneyStatus.isFailure = true;
+        break;
+
+      case ActionTypes.SETTING:
+        draft.settingStatus.isLoading = true;
+        draft.settingStatus.isSuccess = false;
+        draft.settingStatus.isFailure = false;
+        break;
+
+      case ActionTypes.SETTING_SUCCESS:
+        draft.settingStatus.isLoading = false;
+        draft.settingStatus.isSuccess = true;
+        draft.limitSetting = action.payload;
+        break;
+
+      case ActionTypes.SETTING_FAILED:
+        draft.settingStatus.isLoading = false;
+        draft.settingStatus.isFailure = true;
         break;
 
       case ActionTypes.RESET_DATA:

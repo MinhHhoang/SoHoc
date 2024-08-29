@@ -75,6 +75,36 @@ export const getStatisticFailed = (error) => ({
   error,
 });
 
+export const actionResetMoney = (params) => ({
+  type: ActionTypes.RESET,
+  params,
+});
+
+export const actionResetMoneySuccess = (payload) => ({
+  type: ActionTypes.RESET_SUCCESS,
+  payload,
+});
+
+export const actionResetMoneyFailed = (error) => ({
+  type: ActionTypes.RESET_FAILED,
+  error,
+});
+
+export const actionSettingLimit = (params) => ({
+  type: ActionTypes.SETTING,
+  params,
+});
+
+export const actionSettingLimitSuccess = (payload) => ({
+  type: ActionTypes.SETTING_SUCCESS,
+  payload,
+});
+
+export const actionSettingLimitFailed = (error) => ({
+  type: ActionTypes.SETTING_FAILED,
+  error,
+});
+
 export const resetData = () => ({
   type: ActionTypes.RESET_DATA,
 });

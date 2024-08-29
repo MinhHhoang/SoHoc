@@ -11,6 +11,10 @@ import {
   actionEditSuccess,
   actionGetListFailed,
   actionGetListSuccess,
+  actionResetMoneyFailed,
+  actionResetMoneySuccess,
+  actionSettingLimitFailed,
+  actionSettingLimitSuccess,
   getStatisticFailed,
   getStatisticSuccess,
 } from "./action";
@@ -147,6 +151,73 @@ function* callApiDelete({ id }) {
     );
   }
 }
+function* callApiSettingLimit({ params }) {
+  try {
+    const response = yield call(PUT, ENDPOINT.SETTING_LIMIT, params);
+    if (response.status === 200) {
+      yield put(actionSettingLimitSuccess(params));
+      yield put(
+        addToast({
+          text: "Cập nhật hạn mức thành công",
+          type: "success",
+          title: "",
+        })
+      );
+    } else {
+      yield put(actionSettingLimitFailed());
+      yield put(
+        addToast({
+          text: "Cập nhật hạn mức thất bại",
+          type: "danger",
+          title: "",
+        })
+      );
+    }
+  } catch (error) {
+    yield put(actionSettingLimitFailed(error.response.data.error));
+    yield put(
+      addToast({
+        text: "Cập nhật hạn mức thất bại",
+        type: "danger",
+        title: "",
+      })
+    );
+  }
+}
+
+function* callApiResetMoney() {
+  try {
+    const response = yield call(GET, ENDPOINT.RESET_MONEY);
+    if (response.status === 200) {
+      yield put(actionResetMoneySuccess());
+      yield put(
+        addToast({
+          text: "Đặt lại giá tiền thành công",
+          type: "success",
+          title: "",
+        })
+      );
+    } else {
+      yield put(actionResetMoneyFailed());
+      yield put(
+        addToast({
+          text: "Đặt lại giá tiền thất bại",
+          type: "danger",
+          title: "",
+        })
+      );
+    }
+  } catch (error) {
+    yield put(actionResetMoneyFailed(error.response.data.error));
+    yield put(
+      addToast({
+        text: "Đặt lại giá tiền thất bại",
+        type: "danger",
+        title: "",
+      })
+    );
+  }
+}
 export default function* employeeSaga() {
   yield all([
     yield takeLeading(ActionTypes.LIST, callApiList),
@@ -154,5 +225,7 @@ export default function* employeeSaga() {
     yield takeLatest(ActionTypes.ADD, callApiAdd),
     yield takeLatest(ActionTypes.EDIT, callApiEdit),
     yield takeLatest(ActionTypes.DELETE, callApiDelete),
+    yield takeLatest(ActionTypes.RESET, callApiResetMoney),
+    yield takeLatest(ActionTypes.SETTING, callApiSettingLimit),
   ]);
 }

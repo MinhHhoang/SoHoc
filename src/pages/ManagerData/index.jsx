@@ -23,6 +23,8 @@ import {
   actionDelete,
   actionEdit,
   actionGetList,
+  actionResetMoney,
+  actionSettingLimit,
   getStatistic,
   resetData,
 } from "store/ManagerData/action";
@@ -30,12 +32,16 @@ import listRecommend from "./data.json";
 
 function ManagerData(props) {
   const {
+    list,
+    params,
+    limitSetting,
+    sumTotalMoney,
     listStatus: { isLoading },
     actionStatus: { isLoading: actionLoading, isSuccess: actionSuccess },
     listStatistic,
     statisticStatus,
-    list,
-    params,
+    resetMoneyStatus,
+    settingStatus,
   } = useSelector((state) => state.managerDataReducer);
 
   const dispatch = useDispatch();
@@ -44,7 +50,9 @@ function ManagerData(props) {
   const onAdd = (body) => dispatch(actionAdd(body));
   const onEdit = (body) => dispatch(actionEdit(body));
   const onDelete = (body) => dispatch(actionDelete(body));
+  const onResetMoney = () => dispatch(actionResetMoney());
   const onResetData = () => dispatch(resetData());
+  const onSettingLimit = (body) => dispatch(actionSettingLimit(body));
 
   const [tooltip, setTooltip] = useState({
     target: null,
@@ -54,6 +62,8 @@ function ManagerData(props) {
   });
   const [data, setData] = useState({ name: "", value: "", money: "" });
   const [visible, setVisible] = useState(false);
+  const [visibleSetting, setVisibleSetting] = useState(false);
+  const [limit, setLimit] = useState(0);
 
   useEffect(() => {
     if (!isLoading) {
@@ -70,8 +80,15 @@ function ManagerData(props) {
       onCloseTooltip();
       setData({ name: "", value: "", money: "" });
       onGetStatistic();
+      setVisible(false);
     }
   }, [actionSuccess]);
+
+  useEffect(() => {
+    if (settingStatus.isSuccess) {
+      setVisibleSetting(false);
+    }
+  }, [settingStatus.isSuccess]);
 
   const onCloseTooltip = () => {
     setTooltip({
@@ -87,7 +104,11 @@ function ManagerData(props) {
       setData({ name: "", value: "", money: "" });
     } else {
       if (!!data.value && !!data.money) {
-        const newData = { ...data };
+        const newData = {
+          name: data.name.trim() || "_",
+          value: data.value,
+          money: data.money,
+        };
         newData.value = (data.value.match(/\d{2}/g) || []).join(", ");
         if (data?.id) onEdit(newData);
         else onAdd(newData);
@@ -106,6 +127,14 @@ function ManagerData(props) {
   };
 
   const toggleVisible = () => setVisible(!visible);
+  const toggleVisibleSetting = () => {
+    setVisibleSetting(!visibleSetting);
+    setLimit(limitSetting?.limit || 0);
+  };
+
+  const handleSettingLimit = () => {
+    onSettingLimit({ limit });
+  };
 
   return (
     <div>
@@ -226,6 +255,23 @@ function ManagerData(props) {
               >
                 Đặt lại
               </Button>
+
+              <Button
+                className="ms-auto"
+                variant="outline-dark"
+                onClick={() => onResetMoney()}
+              >
+                {resetMoneyStatus.isLoading && (
+                  <Spinner
+                    as="span"
+                    animation="border"
+                    size="sm"
+                    role="status"
+                    aria-hidden="true"
+                  />
+                )}
+                Đặt lại giá tiền
+              </Button>
             </div>
           </div>
         }
@@ -233,9 +279,79 @@ function ManagerData(props) {
         <div className="d-grid">
           <div className="row">
             <div className="col-12 col-md-4">
-              <h6>THỐNG KÊ SỐ 00-99</h6>
+              <div className="d-flex flex-wrap align-items-center mb-1">
+                <h6 className="mb-0">THỐNG KÊ SỐ 00-99</h6>
+                <div className="ms-auto d-flex align-items-center gap-1">
+                  <span> Hạn mức:</span>
+                  <b>
+                    {statisticStatus.isLoading && _size(listStatistic) === 0
+                      ? "loading..."
+                      : formatCurrencyToK(limitSetting?.limit, 1)}
+                  </b>
+                  {!(
+                    statisticStatus.isLoading && _size(listStatistic) === 0
+                  ) && (
+                    <OverlayTrigger
+                      trigger="click"
+                      placement="bottom"
+                      show={visibleSetting}
+                      overlay={
+                        <Popover
+                          id="chat-popover"
+                          style={{ maxWidth: "400px", width: "97%" }}
+                        >
+                          <Popover.Body>
+                            <div className="d-flex gap-2">
+                              <NumericFormat
+                                value={limit}
+                                displayType={"input"}
+                                className="form-control"
+                                id="limit-data"
+                                aria-label="Hạn mức"
+                                placeholder="Hạn mức"
+                                name="limit"
+                                onValueChange={({ floatValue }) =>
+                                  setLimit(floatValue)
+                                }
+                                allowNegative={false} // Không cho phép số âm
+                                decimalScale={0} // Không sử dụng dấu thập phân
+                                fixedDecimalScale={false} // Không cố định số chữ số thập phân
+                                thousandSeparator=","
+                              />
+                              <Button
+                                disabled={settingStatus.isLoading}
+                                className="ms-auto flex-shrink-0"
+                                onClick={handleSettingLimit}
+                              >
+                                {settingStatus.isLoading && (
+                                  <Spinner
+                                    as="span"
+                                    animation="border"
+                                    size="sm"
+                                    role="status"
+                                    aria-hidden="true"
+                                  />
+                                )}
+                                Cập nhật
+                              </Button>
+                            </div>
+                          </Popover.Body>
+                        </Popover>
+                      }
+                    >
+                      <button
+                        className="btn rounded-circle d-flex justify-content-center align-items-center"
+                        style={{ width: 30, height: 30 }}
+                        onClick={toggleVisibleSetting}
+                      >
+                        <i className="fas fa-pencil-alt"></i>
+                      </button>
+                    </OverlayTrigger>
+                  )}
+                </div>
+              </div>
               <div
-                className="d-flex w-100 overflow-auto h-100 mb-3"
+                className="d-flex w-100 overflow-auto h-100"
                 style={{ maxHeight: "calc(100vh - 280px)" }}
               >
                 <table className="table table-hover table-striped">
@@ -312,6 +428,11 @@ function ManagerData(props) {
                   </tbody>
                 </table>
               </div>
+              {!(statisticStatus.isLoading && _size(listStatistic) === 0) && (
+                <div className="text-end pt-2">
+                  Tổng tiền: <b>{formatCurrencyToK(sumTotalMoney, 1)}</b>
+                </div>
+              )}
             </div>
             <div className="col-12 col-md-8">
               <h6>DANH SÁCH DÀN ĐỀ</h6>
@@ -350,7 +471,7 @@ function ManagerData(props) {
                   <tbody>
                     {isLoading && _size(list) === 0 && (
                       <tr>
-                        <td colSpan={4}>
+                        <td colSpan={5}>
                           <div
                             className="d-flex justify-content-center align-items-center w-100"
                             style={{ height: 400 }}

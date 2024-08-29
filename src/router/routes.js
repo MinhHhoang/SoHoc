@@ -1,5 +1,6 @@
 import DefaultLayout from "components/layout/DefaultLayout";
 import { ROUTES } from "constants/routerWeb";
+import Login from "pages/Login";
 import ManagerData from "pages/ManagerData";
 import PageNotFound from "pages/NotFoundPage";
 
@@ -16,6 +17,11 @@ export const publicRoutes = [
         element: <ManagerData />,
       },
     ],
+  },
+  {
+    path: ROUTES.LOGIN,
+    name: "LOGIN",
+    element: <Login />,
   },
   { path: "*", name: "Not Found Page", element: <PageNotFound /> },
 ];
