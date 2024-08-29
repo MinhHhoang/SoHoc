@@ -60,7 +60,7 @@ function ManagerData(props) {
     info: null,
     type: "",
   });
-  const [data, setData] = useState({ name: "", value: "", money: "" });
+  const [data, setData] = useState({ name: "", value: "", money: "0" });
   const [visible, setVisible] = useState(false);
   const [visibleSetting, setVisibleSetting] = useState(false);
   const [limit, setLimit] = useState(0);
@@ -78,7 +78,7 @@ function ManagerData(props) {
   useEffect(() => {
     if (actionSuccess) {
       onCloseTooltip();
-      setData({ name: "", value: "", money: "" });
+      setData({ name: "", value: "", money: "0" });
       onGetStatistic();
       setVisible(false);
     }
@@ -101,7 +101,7 @@ function ManagerData(props) {
 
   const handleSubmit = (type) => {
     if (type === "reset") {
-      setData({ name: "", value: "", money: "" });
+      setData({ name: "", value: "", money: "0" });
     } else {
       if (!!data.value) {
         const newData = {
