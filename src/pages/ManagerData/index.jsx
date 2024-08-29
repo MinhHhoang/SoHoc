@@ -103,11 +103,11 @@ function ManagerData(props) {
     if (type === "reset") {
       setData({ name: "", value: "", money: "" });
     } else {
-      if (!!data.value && !!data.money) {
+      if (!!data.value) {
         const newData = {
           name: data.name.trim() || "_",
           value: data.value,
-          money: data.money,
+          money: data.money || "0",
         };
         newData.value = (data.value.match(/\d{2}/g) || []).join(", ");
         if (data?.id) onEdit(newData);
