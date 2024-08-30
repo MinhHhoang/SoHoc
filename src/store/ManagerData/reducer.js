@@ -9,6 +9,7 @@ const initialState = {
   resetMoneyStatus: { ...status },
   actionStatus: { ...status },
   settingStatus: { ...status },
+  updateMoneyStatus: { ...status },
   list: [],
   listStatistic: {},
   params: { limit: 10, page: 1 },
@@ -154,6 +155,27 @@ const managerDataReducer = (state = initialState, action) => {
       case ActionTypes.SETTING_FAILED:
         draft.settingStatus.isLoading = false;
         draft.settingStatus.isFailure = true;
+        break;
+
+      case ActionTypes.UPDATE_MONEY:
+        draft.updateMoneyStatus.isLoading = true;
+        draft.updateMoneyStatus.isSuccess = false;
+        draft.updateMoneyStatus.isFailure = false;
+        break;
+
+      case ActionTypes.UPDATE_MONEY_SUCCESS:
+        draft.updateMoneyStatus.isLoading = false;
+        draft.updateMoneyStatus.isSuccess = true;
+        draft.list = state.list.map((item) =>
+          action.payload.list.findIndex((ele) => ele.id === item.id) > -1
+            ? { ...item, money: action.payload.money }
+            : item
+        );
+        break;
+
+      case ActionTypes.UPDATE_MONEY_FAILED:
+        draft.updateMoneyStatus.isLoading = false;
+        draft.updateMoneyStatus.isFailure = true;
         break;
 
       case ActionTypes.RESET_DATA:

@@ -25,6 +25,7 @@ import {
   actionGetList,
   actionResetMoney,
   actionSettingLimit,
+  actionUpdateMoney,
   getStatistic,
   resetData,
 } from "store/ManagerData/action";
@@ -41,6 +42,7 @@ function ManagerData(props) {
     listStatistic,
     statisticStatus,
     resetMoneyStatus,
+    updateMoneyStatus,
     settingStatus,
   } = useSelector((state) => state.managerDataReducer);
 
@@ -51,6 +53,7 @@ function ManagerData(props) {
   const onEdit = (body) => dispatch(actionEdit(body));
   const onDelete = (body) => dispatch(actionDelete(body));
   const onResetMoney = () => dispatch(actionResetMoney());
+  const onUpdateMoney = (body) => dispatch(actionUpdateMoney(body));
   const onResetData = () => dispatch(resetData());
   const onSettingLimit = (body) => dispatch(actionSettingLimit(body));
 
@@ -63,7 +66,10 @@ function ManagerData(props) {
   const [data, setData] = useState({ name: "", value: "", money: "0" });
   const [visible, setVisible] = useState(false);
   const [visibleSetting, setVisibleSetting] = useState(false);
+  const [visibleMoney, setVisibleMoney] = useState(false);
   const [limit, setLimit] = useState(0);
+  const [money, setMoney] = useState(0);
+  const [selected, setSelected] = useState([]);
 
   useEffect(() => {
     if (!isLoading) {
@@ -89,6 +95,14 @@ function ManagerData(props) {
       setVisibleSetting(false);
     }
   }, [settingStatus.isSuccess]);
+
+  useEffect(() => {
+    if (updateMoneyStatus.isSuccess) {
+      onGetStatistic();
+      resetDataMoney();
+      setSelected([]);
+    }
+  }, [updateMoneyStatus.isSuccess]);
 
   const onCloseTooltip = () => {
     setTooltip({
@@ -121,13 +135,15 @@ function ManagerData(props) {
     if (tooltip.type === "delete") onDelete(tooltip.info.id);
   };
 
-  const sortData = (data) => {
-    const entries = Object.entries(data);
-    entries.sort(([, a], [, b]) => b.totalMoney - a.totalMoney);
-    return entries.map(([key, value]) => ({ label: key, value }));
-  };
+  const sortNumber = (arr) =>
+    arr.sort((a, b) => {
+      if (a === "00" && b !== "00") return -1; // "00" đứng trước
+      if (a !== "00" && b === "00") return 1; // "00" đứng trước
+      return a.localeCompare(b); // Sắp xếp bình thường cho các giá trị còn lại
+    });
 
   const toggleVisible = () => setVisible(!visible);
+  const toggleVisibleMoney = () => setVisibleMoney(!visibleMoney);
   const toggleVisibleSetting = () => {
     setVisibleSetting(!visibleSetting);
     setLimit(limitSetting?.limit || 0);
@@ -135,6 +151,35 @@ function ManagerData(props) {
 
   const handleSettingLimit = () => {
     onSettingLimit({ limit });
+  };
+
+  const handleSelectedAll = (e) => {
+    if (e.target.checked) {
+      setSelected([...list]);
+    } else {
+      setSelected([]);
+    }
+  };
+
+  const handleSelected = (item, status) => {
+    if (status) setSelected((prev) => [...prev, item]);
+    else
+      setSelected((prev) => {
+        const newList = [...prev].filter((ele) => ele.id !== item.id);
+        if (!newList.length) {
+          resetDataMoney();
+        }
+        return newList;
+      });
+  };
+
+  const resetDataMoney = () => {
+    setVisibleMoney(false);
+    setMoney(0);
+  };
+
+  const handleUpdateMultiple = () => {
+    onUpdateMoney({ list: selected, money });
   };
 
   return (
@@ -398,19 +443,24 @@ function ManagerData(props) {
                           </td>
                         </tr>
                       )}
-                    {_map(sortData(listStatistic), (item, key) => (
+                    {_map(sortNumber(Object.keys(listStatistic)), (key) => (
                       <tr key={key}>
                         <td className="align-middle">
-                          <b style={{ fontSize: 20 }}>{item?.label}</b>
+                          <b style={{ fontSize: 20 }}>{key}</b>
                         </td>
                         <td className="align-middle">
-                          <b>{formatCurrencyToK(item?.value?.totalMoney, 1)}</b>
+                          <b>
+                            {formatCurrencyToK(
+                              listStatistic[key].totalMoney,
+                              1
+                            )}
+                          </b>
                         </td>
                         <td
                           className="align-middle"
                           style={{
                             color:
-                              item?.value?.status === "Bình Thường"
+                              listStatistic[key].status === "Bình Thường"
                                 ? "green"
                                 : "red",
                           }}
@@ -419,12 +469,12 @@ function ManagerData(props) {
                             className="py-2 px-3"
                             pill
                             bg={
-                              item?.value?.status === "Bình Thường"
+                              listStatistic[key].status === "Bình Thường"
                                 ? "success"
                                 : "danger"
                             }
                           >
-                            {item?.value?.status}
+                            {listStatistic[key].status}
                           </Badge>
                         </td>
                       </tr>
@@ -439,7 +489,67 @@ function ManagerData(props) {
               )}
             </div>
             <div className="col-12 col-md-8">
-              <h6>DANH SÁCH DÀN ĐỀ</h6>
+              <div className="d-flex align-items-center">
+                <h6 className="mb-0">DANH SÁCH DÀN ĐỀ</h6>
+                <OverlayTrigger
+                  trigger="click"
+                  placement="bottom"
+                  show={visibleMoney}
+                  overlay={
+                    <Popover
+                      id="chat-popover"
+                      style={{ maxWidth: "400px", width: "97%" }}
+                    >
+                      <Popover.Body>
+                        <h6>Chỉnh giá hàng loạt</h6>
+                        <div className="d-flex gap-2">
+                          <NumericFormat
+                            value={money}
+                            displayType={"input"}
+                            className="form-control"
+                            id="money-data"
+                            aria-label="Giá tiền"
+                            placeholder="Giá tiền"
+                            name="money"
+                            onValueChange={({ floatValue }) =>
+                              setMoney(floatValue)
+                            }
+                            allowNegative={false} // Không cho phép số âm
+                            decimalScale={0} // Không sử dụng dấu thập phân
+                            fixedDecimalScale={false} // Không cố định số chữ số thập phân
+                            thousandSeparator=","
+                          />
+                          <Button
+                            disabled={updateMoneyStatus.isLoading}
+                            className="ms-auto flex-shrink-0"
+                            onClick={handleUpdateMultiple}
+                          >
+                            {updateMoneyStatus.isLoading && (
+                              <Spinner
+                                as="span"
+                                animation="border"
+                                size="sm"
+                                role="status"
+                                aria-hidden="true"
+                              />
+                            )}
+                            Cập nhật
+                          </Button>
+                        </div>
+                      </Popover.Body>
+                    </Popover>
+                  }
+                >
+                  <Button
+                    disabled={!selected?.length}
+                    className="ms-auto"
+                    variant="outline-primary"
+                    onClick={toggleVisibleMoney}
+                  >
+                    Chỉnh giá
+                  </Button>
+                </OverlayTrigger>
+              </div>
               <div
                 className="d-flex w-100 overflow-auto mb-3"
                 style={{ maxHeight: "calc(100vh - 280px)" }}
@@ -448,7 +558,13 @@ function ManagerData(props) {
                   <thead className="sticky-top">
                     <tr>
                       <th scope="col" className="align-middle">
-                        #
+                        <Form.Check.Input
+                          checked={
+                            list?.length && selected?.length === list?.length
+                          }
+                          type="checkbox"
+                          onChange={handleSelectedAll}
+                        ></Form.Check.Input>
                       </th>
                       <th scope="col" className="align-middle">
                         TÊN
@@ -492,7 +608,17 @@ function ManagerData(props) {
                     {list.map((item, index) => (
                       <tr key={item.updatedAt + index}>
                         <th scope="row" className="align-middle">
-                          {index + 1}
+                          <Form.Check.Input
+                            checked={
+                              selected.findIndex(
+                                (element) => element.id === item.id
+                              ) > -1
+                            }
+                            type="checkbox"
+                            onChange={(e) =>
+                              handleSelected(item, e.target.checked)
+                            }
+                          ></Form.Check.Input>
                         </th>
                         <td className="align-middle">
                           <b className="text-danger">{item.name || "_"}</b>

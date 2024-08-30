@@ -105,6 +105,21 @@ export const actionSettingLimitFailed = (error) => ({
   error,
 });
 
+export const actionUpdateMoney = (params) => ({
+  type: ActionTypes.UPDATE_MONEY,
+  params,
+});
+
+export const actionUpdateMoneySuccess = (payload) => ({
+  type: ActionTypes.UPDATE_MONEY_SUCCESS,
+  payload,
+});
+
+export const actionUpdateMoneyFailed = (error) => ({
+  type: ActionTypes.UPDATE_MONEY_FAILED,
+  error,
+});
+
 export const resetData = () => ({
   type: ActionTypes.RESET_DATA,
 });
