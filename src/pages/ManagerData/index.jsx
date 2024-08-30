@@ -28,7 +28,7 @@ import {
   getStatistic,
   resetData,
 } from "store/ManagerData/action";
-import listRecommend from "./data.json";
+// import listRecommend from "./data.json";
 
 function ManagerData(props) {
   const {
@@ -108,6 +108,7 @@ function ManagerData(props) {
           name: data.name.trim() || "_",
           value: data.value,
           money: data.money || "0",
+          id: data?.id,
         };
         newData.value = (data.value.match(/\d{2}/g) || []).join(", ");
         if (data?.id) onEdit(newData);
@@ -182,14 +183,17 @@ function ManagerData(props) {
                     overlay={
                       <Popover
                         id="chat-popover"
-                        style={{ maxWidth: "500px", width: "97%" }}
+                        style={{ maxWidth: "300px", width: "100%" }}
                       >
                         <Popover.Body className="p-0 border-0">
                           <ListGroup
                             className="overflow-auto"
                             style={{ maxHeight: 500 }}
                           >
-                            {listRecommend.map((item, index) => (
+                            {isLoading && (
+                              <ListGroup.Item action>Loading...</ListGroup.Item>
+                            )}
+                            {list.map((item, index) => (
                               <ListGroup.Item
                                 action
                                 key={index}
@@ -491,7 +495,7 @@ function ManagerData(props) {
                           {index + 1}
                         </th>
                         <td className="align-middle">
-                          <b>{item.name || "_"}</b>
+                          <b className="text-danger">{item.name || "_"}</b>
                         </td>
                         <td className="align-middle">
                           <b>{item.value}</b>
