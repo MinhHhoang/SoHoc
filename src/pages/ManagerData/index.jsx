@@ -512,12 +512,12 @@ export default function ManagerData(props) {
                           </b>
                         </td>
                         <td className="align-middle">
-                          <b>
+                          <b className="text-danger">
                             {formatCurrencyToK(listStatistic[key].tienung, 1)}
                           </b>
                         </td>
                         <td className="align-middle">
-                          <b>
+                          <b className="text-primary">
                             {formatCurrencyToK(listStatistic[key].total, 1)}
                           </b>
                         </td>
