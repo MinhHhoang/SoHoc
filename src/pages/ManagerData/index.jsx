@@ -368,7 +368,7 @@ export default function ManagerData(props) {
       >
         <div className="d-grid">
           <div className="row">
-            <div className="col-12 col-md-4">
+            <div className="col-12 col-md-5">
               <div className="d-flex flex-wrap align-items-center mb-1">
                 <h6 className="mb-0">THỐNG KÊ SỐ 00-99</h6>
                 <div className="ms-auto d-flex align-items-center gap-1">
@@ -568,7 +568,7 @@ export default function ManagerData(props) {
                 </div>
               )}
             </div>
-            <div className="col-12 col-md-8">
+            <div className="col-12 col-md-7">
               <div className="d-flex align-items-center">
                 <h6 className="mb-0">DANH SÁCH DÀN ĐỀ</h6>
                 <OverlayTrigger
