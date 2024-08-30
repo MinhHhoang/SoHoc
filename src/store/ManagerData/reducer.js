@@ -10,6 +10,7 @@ const initialState = {
   actionStatus: { ...status },
   settingStatus: { ...status },
   updateMoneyStatus: { ...status },
+  updateAdvanceStatus: { ...status },
   list: [],
   listStatistic: {},
   params: { limit: 10, page: 1 },
@@ -18,6 +19,7 @@ const initialState = {
   },
   limitSetting: {},
   sumTotalMoney: 0,
+  sumTotalAfterUng: 0,
 };
 
 const managerDataReducer = (state = initialState, action) => {
@@ -55,6 +57,7 @@ const managerDataReducer = (state = initialState, action) => {
         draft.listStatistic = action.payload.data;
         draft.limitSetting = action.payload.limitSetting;
         draft.sumTotalMoney = action.payload.sumTotalMoney;
+        draft.sumTotalAfterUng = action.payload.sumTotalAfterUng;
         break;
 
       case ActionTypes.STATISTIC_FAILED:
@@ -129,10 +132,13 @@ const managerDataReducer = (state = initialState, action) => {
         draft.resetMoneyStatus.isSuccess = true;
         Object.keys(state.listStatistic).forEach((key) => {
           draft.listStatistic[key].totalMoney = 0;
+          draft.listStatistic[key].tienung = 0;
+          draft.listStatistic[key].total = 0;
           draft.listStatistic[key].status = "Bình Thường";
         });
         draft.list = state.list.map((item) => ({ ...item, money: 0 }));
         draft.sumTotalMoney = 0;
+        draft.sumTotalAfterUng = 0;
         break;
 
       case ActionTypes.RESET_FAILED:
@@ -176,6 +182,26 @@ const managerDataReducer = (state = initialState, action) => {
       case ActionTypes.UPDATE_MONEY_FAILED:
         draft.updateMoneyStatus.isLoading = false;
         draft.updateMoneyStatus.isFailure = true;
+        break;
+
+      case ActionTypes.UPDATE_MONEY_ADVANCE:
+        draft.updateAdvanceStatus.isLoading = true;
+        draft.updateAdvanceStatus.isSuccess = false;
+        draft.updateAdvanceStatus.isFailure = false;
+        break;
+
+      case ActionTypes.UPDATE_MONEY_ADVANCE_SUCCESS:
+        draft.updateAdvanceStatus.isLoading = false;
+        draft.updateAdvanceStatus.isSuccess = true;
+        draft.listStatistic = action.payload.data;
+        draft.limitSetting = action.payload.limitSetting;
+        draft.sumTotalMoney = action.payload.sumTotalMoney;
+        draft.sumTotalAfterUng = action.payload.sumTotalAfterUng;
+        break;
+
+      case ActionTypes.UPDATE_MONEY_ADVANCE_FAILED:
+        draft.updateAdvanceStatus.isLoading = false;
+        draft.updateAdvanceStatus.isFailure = true;
         break;
 
       case ActionTypes.RESET_DATA:

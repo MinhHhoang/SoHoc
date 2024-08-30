@@ -120,6 +120,21 @@ export const actionUpdateMoneyFailed = (error) => ({
   error,
 });
 
+export const actionUpdateMoneyAdvance = (params) => ({
+  type: ActionTypes.UPDATE_MONEY_ADVANCE,
+  params,
+});
+
+export const actionUpdateMoneyAdvanceSuccess = (payload) => ({
+  type: ActionTypes.UPDATE_MONEY_ADVANCE_SUCCESS,
+  payload,
+});
+
+export const actionUpdateMoneyAdvanceFailed = (error) => ({
+  type: ActionTypes.UPDATE_MONEY_ADVANCE_FAILED,
+  error,
+});
+
 export const resetData = () => ({
   type: ActionTypes.RESET_DATA,
 });

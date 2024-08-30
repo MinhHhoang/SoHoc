@@ -5,13 +5,14 @@ import TemplateContent from "components/layout/TemplateContent";
 import { formatCurrencyToK } from "helper/functions";
 import _map from "lodash/map";
 import _size from "lodash/size";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Badge,
   Button,
   Form,
   InputGroup,
   ListGroup,
+  Overlay,
   OverlayTrigger,
   Popover,
   Spinner,
@@ -26,17 +27,24 @@ import {
   actionResetMoney,
   actionSettingLimit,
   actionUpdateMoney,
+  actionUpdateMoneyAdvance,
   getStatistic,
   resetData,
 } from "store/ManagerData/action";
 // import listRecommend from "./data.json";
+const initialAdvance = {
+  open: false,
+  target: null,
+  index: -1,
+};
 
-function ManagerData(props) {
+export default function ManagerData(props) {
   const {
     list,
     params,
     limitSetting,
     sumTotalMoney,
+    sumTotalAfterUng,
     listStatus: { isLoading },
     actionStatus: { isLoading: actionLoading, isSuccess: actionSuccess },
     listStatistic,
@@ -44,8 +52,8 @@ function ManagerData(props) {
     resetMoneyStatus,
     updateMoneyStatus,
     settingStatus,
+    updateAdvanceStatus,
   } = useSelector((state) => state.managerDataReducer);
-
   const dispatch = useDispatch();
   const onGetList = (body) => dispatch(actionGetList(body));
   const onGetStatistic = (body) => dispatch(getStatistic(body));
@@ -54,9 +62,12 @@ function ManagerData(props) {
   const onDelete = (body) => dispatch(actionDelete(body));
   const onResetMoney = () => dispatch(actionResetMoney());
   const onUpdateMoney = (body) => dispatch(actionUpdateMoney(body));
+  const onUpdateMoneyAdvance = (body) =>
+    dispatch(actionUpdateMoneyAdvance(body));
   const onResetData = () => dispatch(resetData());
   const onSettingLimit = (body) => dispatch(actionSettingLimit(body));
 
+  const popoverRef = useRef(null);
   const [tooltip, setTooltip] = useState({
     target: null,
     visible: false,
@@ -67,8 +78,10 @@ function ManagerData(props) {
   const [visible, setVisible] = useState(false);
   const [visibleSetting, setVisibleSetting] = useState(false);
   const [visibleMoney, setVisibleMoney] = useState(false);
+  const [visibleAdvance, setVisibleAdvance] = useState(initialAdvance);
   const [limit, setLimit] = useState(0);
   const [money, setMoney] = useState(0);
+  const [moneyAdvance, setMoneyAdvance] = useState(0);
   const [selected, setSelected] = useState([]);
 
   useEffect(() => {
@@ -104,6 +117,12 @@ function ManagerData(props) {
     }
   }, [updateMoneyStatus.isSuccess]);
 
+  useEffect(() => {
+    if (updateAdvanceStatus.isSuccess) {
+      resetDataMoneyAdvance();
+    }
+  }, [updateAdvanceStatus.isSuccess]);
+
   const onCloseTooltip = () => {
     setTooltip({
       visible: false,
@@ -119,7 +138,7 @@ function ManagerData(props) {
     } else {
       if (!!data.value) {
         const newData = {
-          name: data.name.trim() || "_",
+          name: data.name.trim(),
           value: data.value,
           money: data.money || "0",
           id: data?.id,
@@ -149,6 +168,17 @@ function ManagerData(props) {
     setLimit(limitSetting?.limit || 0);
   };
 
+  const toggleVisibleAdvance = (e, index) => {
+    setVisibleAdvance((prev) => {
+      resetDataMoneyAdvance();
+      return {
+        open: prev.index === index ? !prev.open : true,
+        target: e.target,
+        index,
+      };
+    });
+  };
+
   const handleSettingLimit = () => {
     onSettingLimit({ limit });
   };
@@ -158,6 +188,7 @@ function ManagerData(props) {
       setSelected([...list]);
     } else {
       setSelected([]);
+      resetDataMoney();
     }
   };
 
@@ -177,11 +208,21 @@ function ManagerData(props) {
     setVisibleMoney(false);
     setMoney(0);
   };
-
-  const handleUpdateMultiple = () => {
-    onUpdateMoney({ list: selected, money });
+  const resetDataMoneyAdvance = () => {
+    setVisibleAdvance(initialAdvance);
+    setMoneyAdvance(0);
   };
 
+  const handleUpdateMultiple = () => {
+    if (selected.length) onUpdateMoney({ list: selected, money });
+  };
+
+  const handleUpdateMoneyAdvance = () => {
+    onUpdateMoneyAdvance({
+      idtienung: listStatistic[visibleAdvance.index].idtienung,
+      tienung: moneyAdvance,
+    });
+  };
   return (
     <div>
       <TemplateContent
@@ -347,7 +388,7 @@ function ManagerData(props) {
                       overlay={
                         <Popover
                           id="chat-popover"
-                          style={{ maxWidth: "400px", width: "97%" }}
+                          style={{ maxWidth: "400px", width: "100%" }}
                         >
                           <Popover.Body>
                             <div className="d-flex gap-2">
@@ -412,14 +453,28 @@ function ManagerData(props) {
                       <th
                         scope="col"
                         className="align-middle"
-                        style={{ width: "33%" }}
+                        style={{ width: "20%" }}
                       >
                         TỔNG TIỀN
                       </th>
                       <th
                         scope="col"
                         className="align-middle"
-                        style={{ width: "33%" }}
+                        style={{ width: "20%" }}
+                      >
+                        TIỀN ỨNG
+                      </th>
+                      <th
+                        scope="col"
+                        className="align-middle"
+                        style={{ width: "20%" }}
+                      >
+                        SỐ DƯ
+                      </th>
+                      <th
+                        scope="col"
+                        className="align-middle"
+                        style={{ width: "20%" }}
                       >
                         TRẠNG THÁI
                       </th>
@@ -429,7 +484,7 @@ function ManagerData(props) {
                     {statisticStatus.isLoading &&
                       _size(listStatistic) === 0 && (
                         <tr>
-                          <td colSpan={3}>
+                          <td colSpan={5}>
                             <div
                               className="d-flex justify-content-center align-items-center w-100"
                               style={{ height: 400 }}
@@ -456,6 +511,16 @@ function ManagerData(props) {
                             )}
                           </b>
                         </td>
+                        <td className="align-middle">
+                          <b>
+                            {formatCurrencyToK(listStatistic[key].tienung, 1)}
+                          </b>
+                        </td>
+                        <td className="align-middle">
+                          <b>
+                            {formatCurrencyToK(listStatistic[key].total, 1)}
+                          </b>
+                        </td>
                         <td
                           className="align-middle"
                           style={{
@@ -477,14 +542,29 @@ function ManagerData(props) {
                             {listStatistic[key].status}
                           </Badge>
                         </td>
+
+                        <td className="align-middle" style={{ width: 80 }}>
+                          <Button
+                            variant="outline-danger"
+                            onClick={(e) => toggleVisibleAdvance(e, key)}
+                          >
+                            Ứng
+                          </Button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
               {!(statisticStatus.isLoading && _size(listStatistic) === 0) && (
-                <div className="text-end pt-2">
-                  Tổng tiền: <b>{formatCurrencyToK(sumTotalMoney, 1)}</b>
+                <div className="text-end mt-2">
+                  <span>
+                    Tổng tiền: <b>{formatCurrencyToK(sumTotalMoney, 1)}</b>
+                  </span>
+                  {" - "}
+                  <span>
+                    Tổng ứng: <b>{formatCurrencyToK(sumTotalAfterUng, 1)}</b>
+                  </span>
                 </div>
               )}
             </div>
@@ -621,7 +701,7 @@ function ManagerData(props) {
                           ></Form.Check.Input>
                         </th>
                         <td className="align-middle">
-                          <b className="text-danger">{item.name || "_"}</b>
+                          <b className="text-danger">{item.name}</b>
                         </td>
                         <td className="align-middle">
                           <b>{item.value}</b>
@@ -662,6 +742,61 @@ function ManagerData(props) {
             </div>
           </div>
         </div>
+        <Overlay
+          trigger="click"
+          placement="bottom"
+          show={visibleAdvance.open}
+          target={visibleAdvance.target}
+        >
+          {(props) => (
+            <Popover
+              id="chat-popover"
+              ref={popoverRef}
+              style={{ maxWidth: "400px", width: "97%" }}
+              {...props}
+            >
+              <Popover.Body>
+                <p className="mb-1">
+                  <b>Cập nhật tiền ứng</b>
+                </p>
+                <div className="d-flex gap-2">
+                  <NumericFormat
+                    value={moneyAdvance}
+                    displayType={"input"}
+                    className="form-control"
+                    id="moneyAdvance-data"
+                    aria-label="Tiền ứng"
+                    placeholder="Tiền ứng"
+                    name="moneyAdvance"
+                    onValueChange={({ floatValue }) =>
+                      setMoneyAdvance(floatValue)
+                    }
+                    allowNegative={false} // Không cho phép số âm
+                    decimalScale={0} // Không sử dụng dấu thập phân
+                    fixedDecimalScale={false} // Không cố định số chữ số thập phân
+                    thousandSeparator=","
+                  />
+                  <Button
+                    disabled={updateAdvanceStatus.isLoading}
+                    className="ms-auto flex-shrink-0"
+                    onClick={handleUpdateMoneyAdvance}
+                  >
+                    {updateAdvanceStatus.isLoading && (
+                      <Spinner
+                        as="span"
+                        animation="border"
+                        size="sm"
+                        role="status"
+                        aria-hidden="true"
+                      />
+                    )}
+                    Cập nhật
+                  </Button>
+                </div>
+              </Popover.Body>
+            </Popover>
+          )}
+        </Overlay>
         <CustomTooltip
           content={`Bạn có chắc muốn xóa dàn đề "${tooltip.info?.value}" này không?`}
           tooltip={tooltip}
@@ -673,5 +808,3 @@ function ManagerData(props) {
     </div>
   );
 }
-
-export default ManagerData;

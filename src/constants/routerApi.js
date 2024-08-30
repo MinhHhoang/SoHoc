@@ -6,4 +6,5 @@ export const ENDPOINT = {
   STATISTIC_MANAGER_DATA: "/api/static",
   RESET_MONEY: "/api/reset",
   SETTING_LIMIT: "/api/setting",
+  MONEY_ADVANCE: (id, tienung) => `/api/ungtien/${id}/${tienung}`,
 };
