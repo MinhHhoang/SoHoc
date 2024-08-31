@@ -475,6 +475,18 @@ export default function ManagerData(props) {
                   )}
                 </div>
               </div>
+              {!(statisticStatus.isLoading && _size(listStatistic) === 0) && (
+                <div className="text-end mb-2">
+                  <span>
+                    Tổng tiền: <b>{formatCurrencyToK(sumTotalMoney, 1)}</b>
+                  </span>
+                  {" - "}
+                  <span>
+                    Tổng sau ứng:{" "}
+                    <b>{formatCurrencyToK(sumTotalAfterUng, 1)}</b>
+                  </span>
+                </div>
+              )}
               <div
                 className="d-flex w-100 overflow-auto h-100"
                 style={{ maxHeight: "calc(100vh - 280px)" }}
@@ -591,17 +603,6 @@ export default function ManagerData(props) {
                   </tbody>
                 </table>
               </div>
-              {!(statisticStatus.isLoading && _size(listStatistic) === 0) && (
-                <div className="text-end mt-2">
-                  <span>
-                    Tổng tiền: <b>{formatCurrencyToK(sumTotalMoney, 1)}</b>
-                  </span>
-                  {" - "}
-                  <span>
-                    Tổng ứng: <b>{formatCurrencyToK(sumTotalAfterUng, 1)}</b>
-                  </span>
-                </div>
-              )}
             </div>
             <div className="col-12 col-md-7">
               <div className="d-flex align-items-center">
