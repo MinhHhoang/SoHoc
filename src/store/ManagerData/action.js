@@ -135,6 +135,21 @@ export const actionUpdateMoneyAdvanceFailed = (error) => ({
   error,
 });
 
+export const actionPlusMoney = (params) => ({
+  type: ActionTypes.PLUS_MONEY,
+  params,
+});
+
+export const actionPlusMoneySuccess = (payload) => ({
+  type: ActionTypes.PLUS_MONEY_SUCCESS,
+  payload,
+});
+
+export const actionPlusMoneyFailed = (error) => ({
+  type: ActionTypes.PLUS_MONEY_FAILED,
+  error,
+});
+
 export const resetData = () => ({
   type: ActionTypes.RESET_DATA,
 });

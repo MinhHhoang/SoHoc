@@ -9,8 +9,11 @@ import {
   actionDeleteSuccess,
   actionEditFailed,
   actionEditSuccess,
+  actionGetList,
   actionGetListFailed,
   actionGetListSuccess,
+  actionPlusMoneyFailed,
+  actionPlusMoneySuccess,
   actionResetMoneyFailed,
   actionResetMoneySuccess,
   actionSettingLimitFailed,
@@ -262,6 +265,45 @@ function* callApiUpdateMoney({ params }) {
     );
   }
 }
+function* callApiPlusMoney({ params }) {
+  try {
+    const { list, money } = params;
+    const callEffects = list.map(({ id, ...res }) =>
+      call(PUT, ENDPOINT.PLUS_MONEY + "/" + id, { ...res, money })
+    );
+
+    const response = yield all(callEffects);
+
+    if (response.every((res) => res.status === 200)) {
+      yield put(actionPlusMoneySuccess(params));
+      yield put(
+        addToast({
+          text: "Cập nhật giá tiền thành công",
+          type: "success",
+          title: "",
+        })
+      );
+    } else {
+      yield put(actionPlusMoneyFailed());
+      yield put(
+        addToast({
+          text: "Cập nhật giá tiền thất bại",
+          type: "danger",
+          title: "",
+        })
+      );
+    }
+  } catch (error) {
+    yield put(actionPlusMoneyFailed(error.response.data.error));
+    yield put(
+      addToast({
+        text: "Cập nhật giá tiền thất bại",
+        type: "danger",
+        title: "",
+      })
+    );
+  }
+}
 function* callApiUpdateMoneyAdvance({ params }) {
   try {
     const response = yield call(
@@ -309,6 +351,7 @@ export default function* employeeSaga() {
     yield takeLatest(ActionTypes.RESET, callApiResetMoney),
     yield takeLatest(ActionTypes.SETTING, callApiSettingLimit),
     yield takeLatest(ActionTypes.UPDATE_MONEY, callApiUpdateMoney),
+    yield takeLatest(ActionTypes.PLUS_MONEY, callApiPlusMoney),
     yield takeLatest(
       ActionTypes.UPDATE_MONEY_ADVANCE,
       callApiUpdateMoneyAdvance

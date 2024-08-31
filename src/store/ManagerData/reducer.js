@@ -11,6 +11,7 @@ const initialState = {
   settingStatus: { ...status },
   updateMoneyStatus: { ...status },
   updateAdvanceStatus: { ...status },
+  plusMoneyStatus: { ...status, type: null },
   list: [],
   listStatistic: {},
   params: { limit: 10, page: 1 },
@@ -29,14 +30,12 @@ const managerDataReducer = (state = initialState, action) => {
         draft.listStatus.isLoading = true;
         draft.listStatus.isSuccess = false;
         draft.listStatus.isFailure = false;
-        draft.params.page = action.params.page;
         break;
 
       case ActionTypes.LIST_SUCCESS:
         draft.listStatus.isLoading = false;
         draft.listStatus.isSuccess = true;
         draft.list = action.payload.data;
-        draft.meta.total = action.payload.total;
         break;
 
       case ActionTypes.LIST_FAILED:
@@ -77,7 +76,7 @@ const managerDataReducer = (state = initialState, action) => {
       case ActionTypes.ADD_SUCCESS:
         draft.actionStatus.isLoading = false;
         draft.actionStatus.isSuccess = true;
-        draft.list = [action.payload, ...state.list];
+        // draft.list = [action.payload, ...state.list];
         break;
 
       case ActionTypes.ADD_FAILED:
@@ -202,6 +201,24 @@ const managerDataReducer = (state = initialState, action) => {
       case ActionTypes.UPDATE_MONEY_ADVANCE_FAILED:
         draft.updateAdvanceStatus.isLoading = false;
         draft.updateAdvanceStatus.isFailure = true;
+        break;
+
+      case ActionTypes.PLUS_MONEY:
+        draft.plusMoneyStatus.isLoading = true;
+        draft.plusMoneyStatus.isSuccess = false;
+        draft.plusMoneyStatus.isFailure = false;
+        draft.plusMoneyStatus.type = action.params?.type || "single";
+        break;
+
+      case ActionTypes.PLUS_MONEY_SUCCESS:
+        draft.plusMoneyStatus.isLoading = false;
+        draft.plusMoneyStatus.isSuccess = true;
+        break;
+
+      case ActionTypes.PLUS_MONEY_FAILED:
+        draft.plusMoneyStatus.isLoading = false;
+        draft.plusMoneyStatus.isFailure = true;
+        draft.plusMoneyStatus.type = null;
         break;
 
       case ActionTypes.RESET_DATA:

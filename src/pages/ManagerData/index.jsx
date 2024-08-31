@@ -24,6 +24,7 @@ import {
   actionDelete,
   actionEdit,
   actionGetList,
+  actionPlusMoney,
   actionResetMoney,
   actionSettingLimit,
   actionUpdateMoney,
@@ -51,6 +52,7 @@ export default function ManagerData(props) {
     statisticStatus,
     resetMoneyStatus,
     updateMoneyStatus,
+    plusMoneyStatus,
     settingStatus,
     updateAdvanceStatus,
   } = useSelector((state) => state.managerDataReducer);
@@ -62,6 +64,7 @@ export default function ManagerData(props) {
   const onDelete = (body) => dispatch(actionDelete(body));
   const onResetMoney = () => dispatch(actionResetMoney());
   const onUpdateMoney = (body) => dispatch(actionUpdateMoney(body));
+  const onPlusMoney = (body) => dispatch(actionPlusMoney(body));
   const onUpdateMoneyAdvance = (body) =>
     dispatch(actionUpdateMoneyAdvance(body));
   const onResetData = () => dispatch(resetData());
@@ -95,13 +98,17 @@ export default function ManagerData(props) {
   }, []);
 
   useEffect(() => {
-    if (actionSuccess) {
+    if (
+      actionSuccess ||
+      (plusMoneyStatus.isSuccess && plusMoneyStatus.type === "single")
+    ) {
       onCloseTooltip();
       setData({ name: "", value: "", money: "0" });
       onGetStatistic();
+      onGetList();
       setVisible(false);
     }
-  }, [actionSuccess]);
+  }, [actionSuccess, plusMoneyStatus.isSuccess]);
 
   useEffect(() => {
     if (settingStatus.isSuccess) {
@@ -110,12 +117,16 @@ export default function ManagerData(props) {
   }, [settingStatus.isSuccess]);
 
   useEffect(() => {
-    if (updateMoneyStatus.isSuccess) {
+    if (
+      updateMoneyStatus.isSuccess ||
+      (plusMoneyStatus.isSuccess && plusMoneyStatus.type === "multi")
+    ) {
       onGetStatistic();
       resetDataMoney();
       setSelected([]);
+      onGetList();
     }
-  }, [updateMoneyStatus.isSuccess]);
+  }, [updateMoneyStatus.isSuccess, plusMoneyStatus.isSuccess]);
 
   useEffect(() => {
     if (updateAdvanceStatus.isSuccess) {
@@ -223,6 +234,10 @@ export default function ManagerData(props) {
       tienung: moneyAdvance,
     });
   };
+  const handlePlusMoney = (type) => {
+    if (type === "multi") onPlusMoney({ list: selected, money, type });
+    else onPlusMoney({ list: [data], money: data.money, type });
+  };
   return (
     <div>
       <TemplateContent
@@ -323,6 +338,26 @@ export default function ManagerData(props) {
                   thousandSeparator=","
                 />
               </div>
+              {data.id && (
+                <Button
+                  variant="success"
+                  disabled={plusMoneyStatus.isLoading}
+                  className="ms-auto flex-shrink-0"
+                  onClick={() => handlePlusMoney("single")}
+                >
+                  {plusMoneyStatus.isLoading &&
+                    plusMoneyStatus.type === "single" && (
+                      <Spinner
+                        as="span"
+                        animation="border"
+                        size="sm"
+                        role="status"
+                        aria-hidden="true"
+                      />
+                    )}
+                  Cộng thêm
+                </Button>
+              )}
               <Button
                 disabled={actionLoading && !tooltip.visible}
                 onClick={() => handleSubmit("filter")}
@@ -578,7 +613,7 @@ export default function ManagerData(props) {
                   overlay={
                     <Popover
                       id="chat-popover"
-                      style={{ maxWidth: "400px", width: "97%" }}
+                      style={{ maxWidth: "500px", width: "97%" }}
                     >
                       <Popover.Body>
                         <h6>Chỉnh giá hàng loạt</h6>
@@ -597,8 +632,27 @@ export default function ManagerData(props) {
                             allowNegative={false} // Không cho phép số âm
                             decimalScale={0} // Không sử dụng dấu thập phân
                             fixedDecimalScale={false} // Không cố định số chữ số thập phân
-                            thousandSeparator=","
+                            thousand
+                            Separator=","
                           />
+                          <Button
+                            variant="success"
+                            disabled={plusMoneyStatus.isLoading}
+                            className="ms-auto flex-shrink-0"
+                            onClick={() => handlePlusMoney("multi")}
+                          >
+                            {plusMoneyStatus.isLoading &&
+                              plusMoneyStatus.type === "multi" && (
+                                <Spinner
+                                  as="span"
+                                  animation="border"
+                                  size="sm"
+                                  role="status"
+                                  aria-hidden="true"
+                                />
+                              )}
+                            Cộng thêm
+                          </Button>
                           <Button
                             disabled={updateMoneyStatus.isLoading}
                             className="ms-auto flex-shrink-0"
