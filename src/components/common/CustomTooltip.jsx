@@ -13,11 +13,7 @@ function CustomTooltip({
 }) {
   return (
     <>
-      <Overlay
-        target={tooltip.target}
-        show={tooltip.visible}
-        placement="bottom"
-      >
+      <Overlay target={tooltip.target} show={tooltip.visible} placement="top">
         {(props) => (
           <Tooltip id="tooltip" {...props} {...propsTooltip}>
             <div style={{ zIndex: 2 }}>
