@@ -799,7 +799,7 @@ export default function ManagerData(props) {
         </div>
         <Overlay
           trigger="click"
-          placement="bottom"
+          // placement="bottom"
           show={visibleAdvance.open}
           target={visibleAdvance.target}
         >
