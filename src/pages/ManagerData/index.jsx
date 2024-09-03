@@ -555,7 +555,7 @@ export default function ManagerData(props) {
                     {_map(sortNumber(Object.keys(listStatistic)), (key) => (
                       <tr key={key}>
                         <td className="align-middle">
-                          <b style={{ fontSize: 20 }}>{key}</b>
+                          <b style={{ fontSize: 24 }}>{key}</b>
                         </td>
                         <td className="align-middle">
                           <b>
