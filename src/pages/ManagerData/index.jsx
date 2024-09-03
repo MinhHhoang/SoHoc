@@ -504,6 +504,13 @@ export default function ManagerData(props) {
                       >
                         TỔNG TIỀN
                       </th>
+                         <th
+                        scope="col"
+                        className="align-middle"
+                        style={{ width: "20%" }}
+                      >
+                        LỊCH SỬ ỨNG
+                      </th>
                       <th
                         scope="col"
                         className="align-middle"
@@ -556,6 +563,11 @@ export default function ManagerData(props) {
                               listStatistic[key].totalMoney,
                               1
                             )}
+                          </b>
+                        </td>
+                         <td className="align-middle">
+                          <b>
+                            listStatistic[key].history
                           </b>
                         </td>
                         <td className="align-middle">
