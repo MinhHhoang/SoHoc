@@ -500,35 +500,35 @@ export default function ManagerData(props) {
                       <th
                         scope="col"
                         className="align-middle"
-                        style={{ width: "15%" }}
+                        style={{ width: "20%" }}
                       >
                         TỔNG TIỀN
                       </th>
                          <th
                         scope="col"
                         className="align-middle"
-                        style={{ width: "35%" }}
+                        style={{ width: "20%" }}
                       >
                         LỊCH SỬ ỨNG
                       </th>
                       <th
                         scope="col"
                         className="align-middle"
-                        style={{ width: "15%" }}
+                        style={{ width: "20%" }}
                       >
                         TIỀN ỨNG
                       </th>
                       <th
                         scope="col"
                         className="align-middle"
-                        style={{ width: "15%" }}
+                        style={{ width: "20%" }}
                       >
                         SỐ DƯ
                       </th>
                       <th
                         scope="col"
                         className="align-middle"
-                        style={{ width: "15%" }}
+                        style={{ width: "20%" }}
                       >
                         TRẠNG THÁI
                       </th>
