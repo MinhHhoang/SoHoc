@@ -38,4 +38,8 @@ export const PLUS_MONEY = "PLUS_MONEY";
 export const PLUS_MONEY_SUCCESS = "PLUS_MONEY_SUCCESS";
 export const PLUS_MONEY_FAILED = "PLUS_MONEY_FAILED";
 
+export const COPY = "COPY";
+export const COPY_SUCCESS = "COPY_SUCCESS";
+export const COPY_FAILED = "COPY_FAILED";
+
 export const RESET_DATA = "RESET_DATA_EMPLOYEE";

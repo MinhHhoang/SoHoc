@@ -11,6 +11,7 @@ const initialState = {
   settingStatus: { ...status },
   updateMoneyStatus: { ...status },
   updateAdvanceStatus: { ...status },
+  copyStatus: { ...status },
   plusMoneyStatus: { ...status, type: null },
   list: [],
   listStatistic: {},
@@ -21,6 +22,7 @@ const initialState = {
   limitSetting: {},
   sumTotalMoney: 0,
   sumTotalAfterUng: 0,
+  copyData: null,
 };
 
 const managerDataReducer = (state = initialState, action) => {
@@ -219,6 +221,25 @@ const managerDataReducer = (state = initialState, action) => {
         draft.plusMoneyStatus.isLoading = false;
         draft.plusMoneyStatus.isFailure = true;
         draft.plusMoneyStatus.type = null;
+        break;
+
+      case ActionTypes.COPY:
+        draft.copyStatus.isLoading = true;
+        draft.copyStatus.isSuccess = false;
+        draft.copyStatus.isFailure = false;
+        draft.copyData = null;
+        break;
+
+      case ActionTypes.COPY_SUCCESS:
+        draft.copyStatus.isLoading = false;
+        draft.copyStatus.isSuccess = true;
+        draft.copyData = action.payload.copyTarget || "Chưa có dữ liệu để copy";
+        console.log("returnproduce  action.payload:", action.payload);
+        break;
+
+      case ActionTypes.COPY_FAILED:
+        draft.copyStatus.isLoading = false;
+        draft.copyStatus.isFailure = true;
         break;
 
       case ActionTypes.RESET_DATA:

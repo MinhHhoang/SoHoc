@@ -17,8 +17,8 @@ function TemplateContent({
     <div className="d-grid gap-3" id="template">
       <div className="col-12 card" {...headerProps}>
         <div className="card-body d-flex justify-content-between align-items-center">
-          <h5 className="m-0 title">
-            <strong>{title}</strong>
+          <h5 className="m-0 title w-100">
+            <strong className="d-block">{title}</strong>
           </h5>
           {showNew && <Button {...btnProps}>{labelNew}</Button>}
         </div>
@@ -39,7 +39,7 @@ function TemplateContent({
 
 TemplateContent.propTypes = {
   labelNew: PropTypes.string,
-  title: PropTypes.string,
+  title: PropTypes.node,
   children: PropTypes.node,
   showNew: PropTypes.bool,
   cardProps: PropTypes.object,

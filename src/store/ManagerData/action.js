@@ -150,6 +150,21 @@ export const actionPlusMoneyFailed = (error) => ({
   error,
 });
 
+export const actionCopy = (params) => ({
+  type: ActionTypes.COPY,
+  params,
+});
+
+export const actionCopySuccess = (payload) => ({
+  type: ActionTypes.COPY_SUCCESS,
+  payload,
+});
+
+export const actionCopyFailed = (error) => ({
+  type: ActionTypes.COPY_FAILED,
+  error,
+});
+
 export const resetData = () => ({
   type: ActionTypes.RESET_DATA,
 });

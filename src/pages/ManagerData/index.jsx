@@ -21,6 +21,7 @@ import { NumericFormat } from "react-number-format";
 import { useDispatch, useSelector } from "react-redux";
 import {
   actionAdd,
+  actionCopy,
   actionDelete,
   actionEdit,
   actionGetList,
@@ -54,11 +55,14 @@ export default function ManagerData(props) {
     updateMoneyStatus,
     plusMoneyStatus,
     settingStatus,
+    copyStatus,
     updateAdvanceStatus,
+    copyData,
   } = useSelector((state) => state.managerDataReducer);
   const dispatch = useDispatch();
   const onGetList = (body) => dispatch(actionGetList(body));
   const onGetStatistic = (body) => dispatch(getStatistic(body));
+  const onCopy = (body) => dispatch(actionCopy(body));
   const onAdd = (body) => dispatch(actionAdd(body));
   const onEdit = (body) => dispatch(actionEdit(body));
   const onDelete = (body) => dispatch(actionDelete(body));
@@ -165,7 +169,7 @@ export default function ManagerData(props) {
     if (tooltip.type === "delete") onDelete(tooltip.info.id);
   };
 
- const sortData = (data) => {
+  const sortData = (data) => {
     const entries = Object.entries(data);
     entries.sort(([, a], [, b]) => b.totalMoney - a.totalMoney);
     return entries.map(([key, value]) => ({ label: key, value }));
@@ -240,7 +244,30 @@ export default function ManagerData(props) {
   return (
     <div>
       <TemplateContent
-        title="HỆ THỐNG NHẬP DỮ LIỆU"
+        title={
+          <div className="d-flex justify-content-between align-items-center">
+            <h6 className="mb-0">
+              <b>HỆ THỐNG NHẬP DỮ LIỆU</b>
+            </h6>
+            <span>{copyData}</span>
+            <Button
+              variant="outline-primary"
+              disabled={copyStatus.isLoading}
+              onClick={() => onCopy()}
+            >
+              {copyStatus.isLoading && (
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                />
+              )}
+              Copy
+            </Button>
+          </div>
+        }
         headerProps={{ className: "col-12 my-2" }}
         filter={
           <div>
@@ -499,45 +526,50 @@ export default function ManagerData(props) {
                       <th
                         scope="col"
                         className="align-middle"
-                        style={{ width: "20%" }}
+                        // style={{ width: "20%" }}
                       >
                         TỔNG TIỀN
                       </th>
-                         <th
+                      <th
                         scope="col"
                         className="align-middle"
-                        style={{ width: "20%" }}
+                        // style={{ width: "20%" }}
                       >
                         LỊCH SỬ ỨNG
                       </th>
                       <th
                         scope="col"
                         className="align-middle"
-                        style={{ width: "20%" }}
+                        // style={{ width: "20%" }}
                       >
                         TIỀN ỨNG
                       </th>
                       <th
                         scope="col"
                         className="align-middle"
-                        style={{ width: "20%" }}
+                        // style={{ width: "20%" }}
                       >
                         SỐ DƯ
                       </th>
                       <th
                         scope="col"
                         className="align-middle"
-                        style={{ width: "20%" }}
+                        // style={{ width: "20%" }}
                       >
                         TRẠNG THÁI
                       </th>
+                      <th
+                        scope="col"
+                        className="align-middle"
+                        // style={{ width: "20%" }}
+                      ></th>
                     </tr>
                   </thead>
                   <tbody>
                     {statisticStatus.isLoading &&
                       _size(listStatistic) === 0 && (
                         <tr>
-                          <td colSpan={5}>
+                          <td colSpan={7}>
                             <div
                               className="d-flex justify-content-center align-items-center w-100"
                               style={{ height: 400 }}
@@ -557,17 +589,10 @@ export default function ManagerData(props) {
                           <b style={{ fontSize: 20 }}>{item?.label}</b>
                         </td>
                         <td className="align-middle">
-                          <b>
-                            {formatCurrencyToK(
-                              item?.value?.totalMoney,
-                              1
-                            )}
-                          </b>
+                          <b>{formatCurrencyToK(item?.value?.totalMoney, 1)}</b>
                         </td>
-                         <td className="align-middle">
-                          <b>
-                            {item?.value?.history}
-                          </b>
+                        <td className="align-middle">
+                          <b>{item?.value?.history}</b>
                         </td>
                         <td className="align-middle">
                           <b className="text-danger">

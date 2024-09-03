@@ -5,11 +5,12 @@ import { addToast } from "store/Toast/action";
 import {
   actionAddFailed,
   actionAddSuccess,
+  actionCopyFailed,
+  actionCopySuccess,
   actionDeleteFailed,
   actionDeleteSuccess,
   actionEditFailed,
   actionEditSuccess,
-  actionGetList,
   actionGetListFailed,
   actionGetListSuccess,
   actionPlusMoneyFailed,
@@ -341,6 +342,44 @@ function* callApiUpdateMoneyAdvance({ params }) {
     );
   }
 }
+function* callApiCopy({ params }) {
+  try {
+    const response = yield call(GET, ENDPOINT.COPY);
+
+    if (response.status === 200) {
+      yield put(actionCopySuccess(response.data));
+      yield call(
+        [navigator.clipboard, "writeText"],
+        response.data?.copyTarget || "no data"
+      );
+      yield put(
+        addToast({
+          text: "Copy dữ liệu thành công",
+          type: "success",
+          title: "",
+        })
+      );
+    } else {
+      yield put(actionCopyFailed());
+      yield put(
+        addToast({
+          text: "Copy dữ liệu thất bại",
+          type: "danger",
+          title: "",
+        })
+      );
+    }
+  } catch (error) {
+    yield put(actionCopyFailed(error.response?.data?.error));
+    yield put(
+      addToast({
+        text: "Copy dữ liệu thất bại",
+        type: "danger",
+        title: "",
+      })
+    );
+  }
+}
 export default function* employeeSaga() {
   yield all([
     yield takeLeading(ActionTypes.LIST, callApiList),
@@ -352,6 +391,7 @@ export default function* employeeSaga() {
     yield takeLatest(ActionTypes.SETTING, callApiSettingLimit),
     yield takeLatest(ActionTypes.UPDATE_MONEY, callApiUpdateMoney),
     yield takeLatest(ActionTypes.PLUS_MONEY, callApiPlusMoney),
+    yield takeLatest(ActionTypes.COPY, callApiCopy),
     yield takeLatest(
       ActionTypes.UPDATE_MONEY_ADVANCE,
       callApiUpdateMoneyAdvance
