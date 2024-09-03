@@ -554,7 +554,7 @@ export default function ManagerData(props) {
                     {_map(sortData(listStatistic), (item, key) => (
                       <tr key={key}>
                         <td className="align-middle">
-                          <b style={{ fontSize: 24 }}>{key}</b>
+                          <b style={{ fontSize: 20 }}>{item?.label}</b>
                         </td>
                         <td className="align-middle">
                           <b>
