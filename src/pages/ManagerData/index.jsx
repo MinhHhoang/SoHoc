@@ -567,7 +567,7 @@ export default function ManagerData(props) {
                         </td>
                          <td className="align-middle">
                           <b>
-                            listStatistic[key].history
+                            {listStatistic[key].history}
                           </b>
                         </td>
                         <td className="align-middle">
