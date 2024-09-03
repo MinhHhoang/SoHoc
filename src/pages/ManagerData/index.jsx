@@ -551,7 +551,7 @@ export default function ManagerData(props) {
                           </td>
                         </tr>
                       )}
-                    {_map(sortData(listStatistic), (key) => (
+                    {_map(sortData(listStatistic), (item, key) => (
                       <tr key={key}>
                         <td className="align-middle">
                           <b style={{ fontSize: 24 }}>{key}</b>
@@ -559,31 +559,31 @@ export default function ManagerData(props) {
                         <td className="align-middle">
                           <b>
                             {formatCurrencyToK(
-                              listStatistic[key].totalMoney,
+                              item?.value?.totalMoney,
                               1
                             )}
                           </b>
                         </td>
                          <td className="align-middle">
                           <b>
-                            {listStatistic[key].history}
+                            {item?.value?.history}
                           </b>
                         </td>
                         <td className="align-middle">
                           <b className="text-danger">
-                            {formatCurrencyToK(listStatistic[key].tienung, 1)}
+                            {formatCurrencyToK(item?.value?.tienung, 1)}
                           </b>
                         </td>
                         <td className="align-middle">
                           <b className="text-primary">
-                            {formatCurrencyToK(listStatistic[key].total, 1)}
+                            {formatCurrencyToK(item?.value?.total, 1)}
                           </b>
                         </td>
                         <td
                           className="align-middle"
                           style={{
                             color:
-                              listStatistic[key].status === "Bình Thường"
+                              item?.value?.status === "Bình Thường"
                                 ? "green"
                                 : "red",
                           }}
@@ -592,12 +592,12 @@ export default function ManagerData(props) {
                             className="py-2 px-3"
                             pill
                             bg={
-                              listStatistic[key].status === "Bình Thường"
+                              item?.value?.status === "Bình Thường"
                                 ? "success"
                                 : "danger"
                             }
                           >
-                            {listStatistic[key].status}
+                            {item?.value?.status}
                           </Badge>
                         </td>
 
