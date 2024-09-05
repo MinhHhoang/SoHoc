@@ -384,6 +384,7 @@ export default function ManagerData(props) {
                   Cộng thêm
                 </Button>
               )}
+                 {!data.id && (
               <Button
                 disabled={actionLoading && !tooltip.visible}
                 onClick={() => handleSubmit("filter")}
@@ -397,8 +398,8 @@ export default function ManagerData(props) {
                     aria-hidden="true"
                   />
                 )}
-                {data?.id ? "Cập nhật" : "Thêm mới"}
-              </Button>
+                Thêm mới
+              </Button>)}
               <Button
                 disabled={actionLoading && !tooltip.visible}
                 variant="outline-secondary"
