@@ -691,7 +691,7 @@ export default function ManagerData(props) {
                               )}
                             Cộng thêm
                           </Button>
-                          <Button
+                          {/* <Button
                             disabled={updateMoneyStatus.isLoading}
                             className="ms-auto flex-shrink-0"
                             onClick={handleUpdateMultiple}
@@ -706,7 +706,7 @@ export default function ManagerData(props) {
                               />
                             )}
                             Cập nhật
-                          </Button>
+                          </Button> */}
                         </div>
                       </Popover.Body>
                     </Popover>
