@@ -112,7 +112,7 @@ export default function ManagerData(props) {
       onGetList();
       setVisible(false);
     }
-  }, [actionSuccess, plusMoneyStatus.isSuccess, copyStatus.isSuccess]);
+  }, [actionSuccess, plusMoneyStatus.isSuccess, copyStatus.isSuccess, copyData]);
 
   useEffect(() => {
     if (settingStatus.isSuccess) {
@@ -130,7 +130,7 @@ export default function ManagerData(props) {
       setSelected([]);
       onGetList();
     }
-  }, [updateMoneyStatus.isSuccess, plusMoneyStatus.isSuccess, , copyStatus.isSuccess]);
+  }, [updateMoneyStatus.isSuccess, plusMoneyStatus.isSuccess, , copyStatus.isSuccess, copyData]);
 
   useEffect(() => {
     if (updateAdvanceStatus.isSuccess) {
