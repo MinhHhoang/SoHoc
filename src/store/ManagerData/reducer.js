@@ -233,6 +233,7 @@ const managerDataReducer = (state = initialState, action) => {
       case ActionTypes.COPY_SUCCESS:
         draft.copyStatus.isLoading = false;
         draft.copyStatus.isSuccess = true;
+        draft.actionStatus.isSuccess = true;
         draft.copyData = action.payload.copyTarget || "Chưa có dữ liệu để copy";
         console.log("returnproduce  action.payload:", action.payload);
         break;
