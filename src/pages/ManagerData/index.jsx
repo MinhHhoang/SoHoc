@@ -103,7 +103,7 @@ export default function ManagerData(props) {
 
   useEffect(() => {
     if (
-      actionSuccess || copyStatus.isSuccess || copyData.isSuccess ||
+      actionSuccess || copyStatus.isSuccess  ||
       (plusMoneyStatus.isSuccess && plusMoneyStatus.type === "single")
     ) {
       onCloseTooltip();
@@ -112,7 +112,7 @@ export default function ManagerData(props) {
       onGetList();
       setVisible(false);
     }
-  }, [actionSuccess, plusMoneyStatus.isSuccess, copyStatus.isSuccess, copyData.isSuccess]);
+  }, [actionSuccess, plusMoneyStatus.isSuccess, copyStatus.isSuccess]);
 
   useEffect(() => {
     if (settingStatus.isSuccess) {
@@ -122,7 +122,7 @@ export default function ManagerData(props) {
 
   useEffect(() => {
     if (
-      updateMoneyStatus.isSuccess || copyStatus.isSuccess || copyData.isSuccess ||
+      updateMoneyStatus.isSuccess || copyStatus.isSuccess || 
       (plusMoneyStatus.isSuccess && plusMoneyStatus.type === "multi")
     ) {
       onGetStatistic();
@@ -130,7 +130,7 @@ export default function ManagerData(props) {
       setSelected([]);
       onGetList();
     }
-  }, [updateMoneyStatus.isSuccess, plusMoneyStatus.isSuccess, , copyStatus.isSuccess, copyData.isSuccess]);
+  }, [updateMoneyStatus.isSuccess, plusMoneyStatus.isSuccess, , copyStatus.isSuccess]);
 
   useEffect(() => {
     if (updateAdvanceStatus.isSuccess) {
