@@ -122,7 +122,7 @@ export default function ManagerData(props) {
 
   useEffect(() => {
     if (
-      updateMoneyStatus.isSuccess 
+      updateMoneyStatus.isSuccess ||
       (plusMoneyStatus.isSuccess && plusMoneyStatus.type === "multi")
     ) {
       onGetStatistic();
