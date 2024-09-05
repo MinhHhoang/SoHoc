@@ -103,7 +103,7 @@ export default function ManagerData(props) {
 
   useEffect(() => {
     if (
-      actionSuccess ||
+      actionSuccess || copyStatus.isSuccess ||
       (plusMoneyStatus.isSuccess && plusMoneyStatus.type === "single")
     ) {
       onCloseTooltip();
