@@ -91,6 +91,8 @@ export default function ManagerData(props) {
   const [moneyAdvance, setMoneyAdvance] = useState(0);
   const [selected, setSelected] = useState([]);
 
+
+  onGetStatistic();
   useEffect(() => {
     if (!isLoading) {
       onGetList(params);
@@ -112,7 +114,7 @@ export default function ManagerData(props) {
       onGetList();
       setVisible(false);
     }
-  }, [actionSuccess, plusMoneyStatus.isSuccess, copyStatus]);
+  }, [actionSuccess, plusMoneyStatus.isSuccess]);
 
   useEffect(() => {
     if (settingStatus.isSuccess) {
@@ -130,14 +132,9 @@ export default function ManagerData(props) {
       setSelected([]);
       onGetList();
     }
-  }, [updateMoneyStatus.isSuccess, plusMoneyStatus.isSuccess, copyStatus]);
+  }, [updateMoneyStatus.isSuccess, plusMoneyStatus.isSuccess]);
 
-  useEffect(() => {
-      onGetStatistic();
-      resetDataMoney();
-      setSelected([]);
-      onGetList();
-  }, []);
+
 
   useEffect(() => {
     if (updateAdvanceStatus.isSuccess) {
