@@ -133,6 +133,13 @@ export default function ManagerData(props) {
   }, [updateMoneyStatus.isSuccess, plusMoneyStatus.isSuccess, copyStatus]);
 
   useEffect(() => {
+      onGetStatistic();
+      resetDataMoney();
+      setSelected([]);
+      onGetList();
+  }, [copyStatus]);
+
+  useEffect(() => {
     if (updateAdvanceStatus.isSuccess) {
       resetDataMoneyAdvance();
     }
