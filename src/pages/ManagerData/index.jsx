@@ -37,7 +37,7 @@ import {
 const initialAdvance = {
   open: false,
   target: null,
-  index: -1,
+  index: "",
 };
 
 export default function ManagerData(props) {
@@ -629,7 +629,7 @@ export default function ManagerData(props) {
                         <td className="align-middle" style={{ width: 80 }}>
                           <Button
                             variant="outline-danger"
-                            onClick={(e) => toggleVisibleAdvance(e, key)}
+                            onClick={(e) => toggleVisibleAdvance(e, item?.label)}
                           >
                             Ứng
                           </Button>
