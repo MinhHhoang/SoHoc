@@ -234,7 +234,7 @@ const managerDataReducer = (state = initialState, action) => {
         draft.copyStatus.isLoading = false;
         draft.copyStatus.isSuccess = true;
         draft.copyData = action.payload.copyTarget || "Chưa có dữ liệu để copy";
-        draft.limitSetting = action.payload;
+        draft.listStatistic = action.payload.data;
         console.log("returnproduce  action.payload:", action.payload);
         break;
 
