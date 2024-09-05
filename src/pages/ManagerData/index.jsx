@@ -112,7 +112,7 @@ export default function ManagerData(props) {
       onGetList();
       setVisible(false);
     }
-  }, [actionSuccess, plusMoneyStatus.isSuccess]);
+  }, [actionSuccess, plusMoneyStatus.isSuccess, copyStatus.isSuccess]);
 
   useEffect(() => {
     if (settingStatus.isSuccess) {
